@@ -1,6 +1,5 @@
 #### Journal production cases from DBElit проекта [aristov.tech](https://aristov.tech/). 
-#### Start log at marth 2025. 
-#### Contact author [TG](@AEugene)
+#### Start log at marth 2025. Contact author [TG](@AEugene)
 
 ### Март 2025
 1. [Паджинация - долгий оффсет + лимит](/cases/2503_offset_limit.md)
