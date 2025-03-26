@@ -26,5 +26,9 @@ https://www.percona.com/blog/sql-optimizations-in-postgresql-in-vs-exists-vs-any
 - необходимо поисследовать кейсы использования промежуточных результатов, возвращаемых из внешней таблицы + использование индексов
 
 ### A:  
+https://github.com/tds-fdw/tds_fdw/issues/168
+Local subquery being corrupted - query producing incorrect results ·
+Известный баг в FDW для MSSQL
+
 Выбрать правильный оператор между ANY, IN и =, обратить внимание на EXISTS и поведение индексов во внешней таблице.
 
