@@ -12,3 +12,31 @@
 ### A2: 
 Ближе к концу года будут(кейсы).
 Учитывай, что BiHA только в Enterprise версии, в стандарте нет.
+
+### A: 
+Тестирую pgpro17? уже третья заявка в саппорт. В систем-ди юните забыли параметр. Ерунда, просто написал, что потеряли - поправьте.
+При создании кластера с нуля требуется выполнить указания
+https://postgrespro.ru/docs/enterprise/17/biha-setting-up-a-biha-cluster
+```bash
+При этом первая нода создается как
+bihactl init \
+     --biha-node-id=1 \
+     --host=узел_1 \
+     --port=порт_узла \
+     --biha-port=порт_biha \
+     --nquorum=количество_узлов \
+     --pgdata=каталог_PGDATA_лидера
+```
+Для того, чтобы настроить кластер на работу с tls, надо следовать замечанию- 
+https://postgrespro.ru/docs/enterprise/17/biha-setting-up-a-biha-cluster#BIHA-SETTING-UP-A-BIHA-CLUSTER-SSL-CONFIGURATION
+     
+Где сказано:
+"С помощью утилиты OpenSSL сгенерируйте сертификат и закрытый ключ и сохраните их в каталоге /PGDATA/pg_biha на каждом узле кластера"
+     
+Однако, в таком случае, запуск команды bihactl init завершается ошибкой.
+bihactl: PGDATA directory (/var/lib/pgpro/ent-17/data) is not empty, but --convert flag is not used.
+Try "bihactl --help" for more information.
+
+Каким же образом можно одновременно и разместить сертификаты в PGDATA и обеспечить отсутствие файлов внутри?
+
+
