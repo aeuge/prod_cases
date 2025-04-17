@@ -9,4 +9,8 @@
 
 ### Апрель 2025
 5. [BiHA Встроенная отказоустойчивость PostgresPro - доступна только в Enterprise версии (по сост. на 042025)](/cases/2504_inf_about_BiHA.md)
+<<<<<<< HEAD
 6. [Локальный AI для закрытого контура на базе Ollama и Lm-studio](/cases/2504_local_AI.md)
+=======
+6. [Локальный AI для закрытого контура на базе Ollama и Lm-studio](/cases/202504_local_AI.md)
+>>>>>>> 2b79b94ed08fbfe36750fa52e3cabb4f2d8d5dac
