@@ -10,3 +10,4 @@
 ### Апрель 2025
 5. [BiHA Встроенная отказоустойчивость PostgresPro - доступна только в Enterprise версии (по сост. на 042025)](/cases/2504_inf_about_BiHA.md)
 6. [Локальный AI для закрытого контура на базе Ollama и Lm-studio](/cases/2504_local_AI.md)
+7. [Google Compute Engine - на ВМ c 24 Ubuntu $(hostname) даёт FQDN, а не короткое имя](/cases/cce_ubuntu24_fqdn.md)
