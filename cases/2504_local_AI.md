@@ -23,7 +23,7 @@ lm-studio или ollama?
 Винда увы. Хотя когда gpu прикручу не факт, что не попробую. А под линуксом все просто. Сейчас сваяю пару строк.
 
 #### LM-Studio
-```
+```bash
 Загрузить для выбранной платформы
 https://lmstudio.ai/
 https://dimensionquest.net/2024/09/how-i-install-lm-studio-0.3.2-on-ubuntu-studio-24.04-linux/
