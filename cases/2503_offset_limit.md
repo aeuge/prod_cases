@@ -9,7 +9,9 @@
 Postgres 16
 
 ### Уточнение задачи:  
+```sql
 Select id, f1,...fn from table where f5=4 and f6=1 and f9 between 5 and 8 order by id limit 1000 offset 28000;
+```
 Выполняется 5 сек
 
 ### Как решать задачу:  
@@ -23,6 +25,8 @@ Select id, f1,...fn from table where f5=4 and f6=1 and f9 between 5 and 8 order 
 условие в выборку больше последнего значения выданного в 1 странице и выдать снова первую страницу - усложняется код
 
 ### A:  
+```sql
 Select id, f1,...fn from table where id in(select id from table where f5=4 and f6=1 and f9 between 5 and 8 order by id limit 1000 offset 28000)
+```
 Выполняется 0.3 сек
 По индексу фильтрует что в первом что во втором случае. Просто в первом случае тащит и выбрасывает offset широкую строку, а во втором случае один int.
