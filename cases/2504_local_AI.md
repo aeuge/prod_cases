@@ -45,6 +45,7 @@ EOF
 ```
 
 #### Ollama
+```bash
 https://ollama.com/download
 Загрузка и установка приложения
 ❯ curl -fsSL https://ollama.com/install.sh | sh
@@ -70,6 +71,7 @@ https://ollama.com/library/deepseek-coder-v2:236b
 133GB
 И запускаем терминальный диалог
 ollama run deepseek-coder-v2:236b
+```
 
 ### Q:
 Это рабочие инструкции ? Я не открывал.
