@@ -11,3 +11,6 @@
 5. [BiHA Встроенная отказоустойчивость PostgresPro - доступна только в Enterprise версии (по сост. на 042025)](/cases/2504_inf_about_BiHA.md)
 6. [Локальный AI для закрытого контура на базе Ollama и Lm-studio](/cases/2504_local_AI.md)
 7. [Google Compute Engine - на ВМ c 24 Ubuntu $(hostname) даёт FQDN, а не короткое имя](/cases/cce_ubuntu24_fqdn.md)
+
+### Май 2025
+8. [Truncate нежурналируемых (UNLOGGED) таблиц Postgresql при переходе в режим read-only](/cases/truncate_unlogged_tables.md)
