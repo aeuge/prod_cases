@@ -14,3 +14,4 @@
 
 ### Май 2025
 8. [Truncate нежурналируемых (UNLOGGED) таблиц Postgresql при переходе в режим read-only](/cases/2505_truncate_unlogged_tables.md)
+9. [Kafka - развал кластера после экспериментов(всему виной пробел)](/cases/2505_kafra_failed.md)
