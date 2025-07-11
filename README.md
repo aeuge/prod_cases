@@ -14,6 +14,8 @@
 
 ### Май 2025
 8. [Truncate нежурналируемых (UNLOGGED) таблиц Postgresql при переходе в режим read-only](/cases/2505_truncate_unlogged_tables.md)
+9. [Kafka - развал кластера после экспериментов(всему виной пробел)](/cases/2505_kaf%D0%BAa_failed.md)
+
 
 ### Июль 2025
-9. [Зависает mongosh при копировании и вставке запроса](/cases/2507_mongosh.md)
+10. [Зависает mongosh при копировании и вставке запроса](/cases/2507_mongosh.md)
