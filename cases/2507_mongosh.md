@@ -1,7 +1,7 @@
 ### Q:
 
 При копировании запроса mongosh зависает в таком виде:
-![ошибка mongosh](/img/2507_mongosh.png)
+![ошибка mongosh](/cases/img/2507_mongosh.png)
 Приходилось прерывать консоль ctrl+C или ctrl+D
 
 
