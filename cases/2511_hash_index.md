@@ -19,11 +19,9 @@ FROM generate_series(1, 100);
 
 ### Вот этот индекс вызывается:
 
-CREATE INDEX idx_t_status_hash_new ON t USING hash (status) WHERE status <> 'DONE';
-EXPLAIN ANALYZE SELECT * FROM t WHERE status = 'NEW' LIMIT 10;
+  CREATE INDEX idx_t_status_hash_new ON t USING hash (status) WHERE status <> 'DONE';
+  EXPLAIN ANALYZE SELECT * FROM t WHERE status = 'NEW' LIMIT 10;
 
-                                                              QUERY PLAN
----------------------------------------------------------------------------------------------------------------------------------------
  Limit  (cost=0.00..757.06 rows=10 width=12) (actual time=0.014..0.017 rows=10 loops=1)
    ->  Index Scan using idx_t_status_hash_new on t  (cost=0.00..12642.92 rows=167 width=12) (actual time=0.013..0.015 rows=10 loops=1)
          Index Cond: (status = 'NEW'::text)
@@ -33,11 +31,9 @@ EXPLAIN ANALYZE SELECT * FROM t WHERE status = 'NEW' LIMIT 10;
 
 ### А этот нет:
 
-CREATE INDEX idx_t_status_hash_new ON t USING hash (status) WHERE status = 'NEW';
-EXPLAIN ANALYZE SELECT * FROM t WHERE status = 'NEW' LIMIT 10;
+  CREATE INDEX idx_t_status_hash_new ON t USING hash (status) WHERE status = 'NEW';
+  EXPLAIN ANALYZE SELECT * FROM t WHERE status = 'NEW' LIMIT 10;
 
-                                              QUERY PLAN
------------------------------------------------------------------------------------------------------------
  Limit  (cost=0.00..1072.43 rows=10 width=12) (actual time=81.296..81.299 rows=10 loops=1)
    Buffers: shared hit=96 read=5311
    ->  Seq Scan on t  (cost=0.00..17909.50 rows=167 width=12) (actual time=81.292..81.294 rows=10 loops=1)
