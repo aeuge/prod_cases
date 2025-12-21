@@ -46,7 +46,7 @@ EXPLAIN ANALYZE SELECT * FROM t WHERE status = 'NEW' LIMIT 10;
 
 
 ### A1:
-Тестовый стенд
+[Тестовый стенд](https://www.db-fiddle.com/f/stoC7HmjGyPAxbFcKMV3u1/3)
 
 ### A:
 Валерий: Хэш не может быть покрывающим и имеет коллизии. Плюсом он показывает не на строки а на страницы (это в доке так пишут). 
