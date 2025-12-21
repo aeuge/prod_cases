@@ -18,6 +18,7 @@ SELECT 'NEW'
 FROM generate_series(1, 100);
 
 ### Вот этот индекс вызывается:
+
 CREATE INDEX idx_t_status_hash_new ON t USING hash (status) WHERE status <> 'DONE';
 EXPLAIN ANALYZE SELECT * FROM t WHERE status = 'NEW' LIMIT 10;
                                                               QUERY PLAN
@@ -30,6 +31,7 @@ EXPLAIN ANALYZE SELECT * FROM t WHERE status = 'NEW' LIMIT 10;
 (5 rows)
 
 ### А этот нет:
+
 CREATE INDEX idx_t_status_hash_new ON t USING hash (status) WHERE status = 'NEW';
 EXPLAIN ANALYZE SELECT * FROM t WHERE status = 'NEW' LIMIT 10;
                                               QUERY PLAN
