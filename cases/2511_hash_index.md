@@ -3,7 +3,7 @@
 Добавляю частичный индекс на проект, заметил что хэш индекс с условием = не вызывается, с <> вызывается успешно.
 Кто-то может обьяснить, почему такое поведение?
 
-Вот создаем данные
+### Вот создаем данные:
 CREATE TABLE t (
     id BIGSERIAL PRIMARY KEY,
     status TEXT NOT NULL
@@ -17,7 +17,7 @@ INSERT INTO t(status)
 SELECT 'NEW'
 FROM generate_series(1, 100);
 
-Вот этот индекс вызывается
+### Вот этот индекс вызывается:
 CREATE INDEX idx_t_status_hash_new ON t USING hash (status) WHERE status <> 'DONE';
 EXPLAIN ANALYZE SELECT * FROM t WHERE status = 'NEW' LIMIT 10;
                                                               QUERY PLAN
@@ -29,7 +29,7 @@ EXPLAIN ANALYZE SELECT * FROM t WHERE status = 'NEW' LIMIT 10;
  Execution Time: 0.028 ms
 (5 rows)
 
-А этот нет
+### А этот нет:
 CREATE INDEX idx_t_status_hash_new ON t USING hash (status) WHERE status = 'NEW';
 EXPLAIN ANALYZE SELECT * FROM t WHERE status = 'NEW' LIMIT 10;
                                               QUERY PLAN
