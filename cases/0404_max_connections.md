@@ -8,7 +8,6 @@
 В статье — диагностика, алгоритм восстановления и профилактика.
 
 ---
-
 ## 1. Введение: как Patroni меняет требующие перезапуска параметры
 ---
 В кластере под управлением Patroni (с DCS etcd) параметры PostgreSQL хранятся в `/config/<cluster_name>` в etcd. 
@@ -16,12 +15,12 @@
 Для параметров, которые нельзя применить через `pg_reload_conf()` (например, `max_connections`), Patroni выставляет флаг `pending restart`.
 
 Обычный процесс:
-```bash
+```sql
 patronictl edit-config    # меняем max_connections с 10000 на 3120
 patronictl list           # видим '*' в колонке Pending restart
 patronictl restart <cluster> -r leader
 patronictl restart <cluster> -r replica
-
+```
 Но в нашем случае команда patronictl restart -r leader завершалась с 503 Service Unavailable и провоцировала autofailover — лидер переключался на другую ноду, кластер терял доступ на несколько секунд.
 
 Вывод patronictl restart:
@@ -48,8 +47,9 @@ WARNING: pg_controldata will be used because recovery.signal exists
 
 После failover новый лидер также не применяет новое значение max_connections, и pending restart никуда не исчезает.
 
-# 3. Диагностика: находим корень зла
-
+---
+### 3. Диагностика: находим корень зла
+---
 3.1. Обнаружение recovery.signal
 На всех 4 нодах кластера был найден файл:
 
@@ -92,10 +92,15 @@ Patroni проверяет значение max_connections через pg_contro
 
 Подтверждение — строка pg_controldata will be used в логе.
 
-## 4. Решение (проверенный алгоритм)
+---
+#### 4. Решение (проверенный алгоритм)
+---
+
 Мы воспроизвели проблему на тестовом кластере и выработали алгоритм. Важно: все действия выполняются от root или через sudo, если не указано иное.
 
+---
 4.1. Базовый сценарий (если restore_command уже задан)
+---
 Шаг 1. Удаляем recovery.signal на текущем лидере
 bash
 rm /var/lib/postgresql/12/main/recovery.signal
@@ -112,7 +117,7 @@ patronictl -c /etc/patroni/patroni.yml restart cluster_name -r replica
 
 4.2. Если restore_command отсутствовал в конфиге
 Проверяем на всех нодах наличие restore_command в разделе postgresql файла patroni.yml. Если нет — добавляем:
-
+```yaml
 yaml
 postgresql:
   create_replica_methods:
@@ -124,6 +129,7 @@ postgresql:
     command: /usr/bin/pgbackrest restore --stanza=cluster_name --delta
     no_params: True
     keep_data: True
+```
 После этого:
 
 bash
@@ -138,45 +144,10 @@ SHOW restore_command;
 4.3. Тяжёлый сценарий: когда pg_controldata не обновляется даже после удаления recovery.signal
 Если после выполнения п. 4.1 pending restart не исчез и в логах снова появилось pg_controldata will be used — значит, pg_controldata упорно хранит старое значение 10000. Это случается, если удаление recovery.signal произошло после того, как Patroni уже прочитал контрольные данные, или если PostgreSQL ни разу не стартовал без recovery.signal после изменения параметра.
 
-Решение — ручное обновление pg_controldata:
-
-Шаг A. Останавливаем Patroni на всех репликах
-bash
-for host in replica1 replica2 replica3; do
-  ssh $host "sudo systemctl stop patroni"
-done
-Шаг B. Останавливаем Patroni на мастере
-bash
-sudo systemctl stop patroni
-Шаг C. На мастере вручную правим postgresql.conf
-bash
-vim /var/lib/postgresql/12/main/postgresql.conf
-# Меняем max_connections = 3120
-Шаг D. Запускаем этот инстанс PostgreSQL вручную (без recovery.signal)
-bash
-su - postgres
-pg_ctlcluster 12 main start
-При старте без recovery.signal PostgreSQL перезаписывает pg_controldata, фиксируя новое значение max_connections.
-
-Шаг E. Останавливаем вручную запущенный инстанс
-bash
-pg_ctlcluster 12 main stop
-exit
-Шаг F. Запускаем Patroni на этом хосте (он станет лидером)
-bash
-sudo systemctl start patroni
-Шаг G. Запускаем Patroni на репликах
-bash
-for host in replica1 replica2 replica3; do
-  ssh $host "sudo systemctl start patroni"
-done
-Шаг H. Повторяем перезапуск через patronictl
-bash
-patronictl -c /etc/patroni/patroni.yml restart cluster_name -r leader
-patronictl -c /etc/patroni/patroni.yml restart cluster_name -r replica
-Теперь pending restart гарантированно исчезает, max_connections = 3120 на всех нодах.
-
+---
 ## 5. Почему это работает: разбор механики
+---
+
 pg_controldata — бинарный файл в каталоге данных, содержащий критическую информацию о состоянии кластера, включая значение max_connections на момент последнего нормального (не recovery) запуска.
 
 Patroni, обнаружив recovery.signal, не рискует перезаписывать контрольные данные и полагается на то, что там уже записано.
@@ -185,7 +156,10 @@ Patroni, обнаружив recovery.signal, не рискует перезап�
 
 После этого Patroni, стартуя поверх уже «чистых» контрольных данных, видит новое значение и успешно применяет перезапуск.
 
+---
 ## 6. Предотвращение в будущем
+---
+
 Чтобы не попадать в эту ловушку снова (особенно при уменьшении max_connections или других параметров, требующих перезапуска):
 
 6.1. Явно отключить сохранение recovery.conf
@@ -200,35 +174,27 @@ patronictl edit-config   # применит изменения в etcd
 patronictl restart <cluster> -r leader -r replica
 После этого Patroni будет удалять recovery.signal при успешном завершении восстановления.
 
-6.2. Мониторинг наличия recovery.signal на лидере
-Добавьте проверку в систему мониторинга (например, в скрипт для Prometheus patroni_exporter или в cron):
-
-bash
-#!/bin/bash
-LEADER=$(patronictl list --format json | jq -r '.[] | select(.Role=="Leader") | .Host')
-if ssh $LEADER "test -f /var/lib/postgresql/12/main/recovery.signal"; then
-  echo "WARNING: recovery.signal exists on leader" | logger -t patroni_check
-fi
-При обнаружении — удалять файл (после подтверждения, что кластер не в реальном PITR).
-
-6.3. При использовании pgbackrest всегда задавать restore_command
+6.2. При использовании pgbackrest всегда задавать restore_command
 Как показано в п. 4.2 — это позволяет Patroni корректно обрабатывать случаи отставания реплик без оставления «висящих» файлов.
 
-6.4. Перед изменением параметров, требующих перезапуска
+6.3. Перед изменением параметров, требующих перезапуска
 Простая ручная проверка на лидере:
 
 bash
 ssh leader "ls -la /var/lib/postgresql/12/main/recovery.signal"
 Если файл есть — удалить, если не уверены — выполнить patronictl flush <cluster> <member> (но лучше проверить документацию).
 
-## 7. Заключение
+---
+## Заключение
+---
+
 Этот кейс — отличный пример того, как даже «безобидный» файл-призрак recovery.signal может нарушить работу, казалось бы, отлаженного механизма Patroni.
 
 Благодарности: коллегам из команды сопровождения, которые помогли воспроизвести проблему на тестовом стенде и отточить решение.
 
 P.S. Если вы столкнулись с похожим поведением на более новых версиях PostgreSQL (13, 14, 15, 16) — механизм с recovery.signal остался тем же. Разница только в пути к каталогу данных (например, /var/lib/postgresql/14/main).
 
-Полезные ссылки:
+## Полезные ссылки:
 
 Patroni documentation: Replica bootstrap
 
