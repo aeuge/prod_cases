@@ -24,10 +24,12 @@ patronictl restart <cluster> -r replica
 Но в нашем случае команда patronictl restart -r leader завершалась с 503 Service Unavailable и провоцировала autofailover — лидер переключался на другую ноду, кластер терял доступ на несколько секунд.
 
 Вывод patronictl restart:
+```
 Failed: restart for member leader failed, status code=503
 В логах Patroni (/var/log/paroni/patroni.log) появляется строка:
 
 WARNING: pg_controldata will be used because recovery.signal exists
+```
 В логах PostgreSQL — ничего критичного, обычный старт в режиме recovery.
 
 После failover новый лидер также не применяет новое значение max_connections, и pending restart никуда не исчезает.
