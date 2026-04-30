@@ -1,4 +1,4 @@
-# Пропажа разделяемой памяти PostgreSQL: No such file or directory
+# Пропажа разделяемой памяти PostgreSQL
 
 > **Кейс:** production-база PostgreSQL начала сыпать ошибками при параллельном выполнении запросов.
 
