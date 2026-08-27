@@ -24,7 +24,7 @@ PostgreSQL собран из исходников 16.12
 ## 2. Диагностика
 ---
 
-Было 5 попыток сделать реплики с параметрами:
+Было 5 попыток сделать реплики с параметрами:  
 hot_standby = 'off'  
 max_standby_archive_delay = '-1'  
 max_standby_streaming_delay = '-1'  
@@ -32,14 +32,16 @@ full_page_writes = 'off'
 fsync = 'off'  
 restore_command = ''  
 
-Никакой разницы.
-Изменен бинарник на 16.14 - никакой разницы.
-Были попытки изучить на чёт спотыкается процесс:
-strace: Process 476162 attached
-futex(0x7fd872031c38, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = ? ERESTARTSYS (To be restarted if SA_RESTART is set)
---- SIGALRM {si_signo=SIGALRM, si_code=SI_KERNEL} ---
-setitimer(ITIMER_REAL, {it_interval={tv_sec=0, tv_usec=0}, it_value={tv_sec=9, tv_usec=999673}}, NULL) = 0
-rt_sigreturn({mask=[URG]})              = 202
+Никакой разницы.  
+Изменен бинарник на 16.14 - никакой разницы.  
+Были попытки изучить на чёт спотыкается процесс:  
+strace: Process 476162 attached  
+
+futex(0x7fd872031c38, FUTEX_WAIT_BITSET|FUTEX_CLOCK_REALTIME, 0, NULL, FUTEX_BITSET_MATCH_ANY) = ? ERESTARTSYS (To be restarted if SA_RESTART is set)  
+--- SIGALRM {si_signo=SIGALRM, si_code=SI_KERNEL} ---  
+setitimer(ITIMER_REAL, {it_interval={tv_sec=0, tv_usec=0}, it_value={tv_sec=9, tv_usec=999673}}, NULL) = 0  
+rt_sigreturn({mask=[URG]})              = 202  
+
 Постоянно прилетающий сигнал SIGALRM — это внутренний таймер PostgreSQL (диагностика дедлоков), который каждые несколько секунд пытается «разбудить» процесс, но безуспешно. Поток ядра заблокирован намертво в ожидании защелки общей памяти (Shared Memory Latch).
 В связке PostgreSQL 16.14 + Debian 12 такое поведение вызывается багом распределения системной памяти. startup пытается захватить кусок разделяемой памяти, который ОС Linux уже заблокировала для другого (возможно, старого, аварийно завершенного) процесса Postgres. Обычные рестарты СУБД из-за этого не помогают.
 
