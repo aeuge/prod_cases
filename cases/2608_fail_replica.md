@@ -25,12 +25,12 @@ PostgreSQL собран из исходников 16.12
 ---
 
 Было 5 попыток сделать реплики с параметрами:
-hot_standby = 'off'
-max_standby_archive_delay = '-1'
-max_standby_streaming_delay = '-1'
-full_page_writes = 'off'
-fsync = 'off'
-restore_command = ''
+hot_standby = 'off'  
+max_standby_archive_delay = '-1'  
+max_standby_streaming_delay = '-1'  
+full_page_writes = 'off'  
+fsync = 'off'  
+restore_command = ''  
 
 Никакой разницы.
 Изменен бинарник на 16.14 - никакой разницы.
