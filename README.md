@@ -14,7 +14,7 @@
 
 ### Май 2025
 8. [Truncate нежурналируемых (UNLOGGED) таблиц Postgresql при переходе в режим read-only](/cases/2505_truncate_unlogged_tables.md)
-9. [Kafka - развал кластера после экспериментов(всему виной пробел)](/cases/2505_kaf%D0%BAa_failed.md)
+9. [Kafka - развал кластера после экспериментов(всему виной пробел)](/cases/2505_kafka_failed.md)
 
 
 ### Июль 2025
@@ -31,7 +31,9 @@
 14. [Вебморда Патрони имеет другую версию](/cases/2512_web_patroni.md)
 
  ### Апрель 2026
-15. [Разделяемая память](/cases/3004_shared_mem_segment.md)
+15. [Разделяемая память](/cases/2604_shared_mem_segment.md)
+16. [Статистика после мажорного обновления](/cases/2604_statistics_case_after_major_upgrade_from14ver_to_17.md)
+17. [Как уменьшить max_connections в Patroni](/cases/2604_max_connections.md)
 
- ### Апрель 2026
-16. [Статистика после мажорного обновления](/cases/3004_statistics_case_after_major_upgrade_from14ver_to_17.md)
+ ### Август 2026
+18. [Реплика не стартует 16 PostgreSQL](/cases/2608_fail_replica.md)
